@@ -1,14 +1,22 @@
 #include <stdio.h>
-#include "sds.h"
+#include <stdlib.h>
+#include "math/dot.h"
+#include "perf/nanos.h"
 
-/*-----------------------------------------------------------------------------
- * Program main()
- *----------------------------------------------------------------------------*/
+#define SIZE 1000
+float a[SIZE], b[SIZE], total;
 
 int main(int argc, char **argv) {
-    sds welcomeMsg = sdsnew("Welcome to C!");
-    printf("%s\n", welcomeMsg);
+  {
+    for (int i = 0; i < SIZE; ++i)
+      a[i] = b[i] = i;
 
-    sdsfree(welcomeMsg);
-    return 0;
+    NANOS(et_auto, float x = dot(a, b, SIZE));
+    NANOS(et_omp, float y = dot_simd(a, b, SIZE));
+
+    printf("[ Auto simd: %ld ns ]  vs  [ Forced simd: %ld ns ]\n", et_auto, et_omp);
+    printf("[ Auto simd: %f ]  vs  [ Forced simd: %f ]\n", x, y);
+  }
+
+  return EXIT_SUCCESS;
 }

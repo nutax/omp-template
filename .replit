@@ -1,0 +1,4 @@
+run = "cd build && cmake ..  && make && cd ../bin && ./app"
+
+[nix]
+channel = "stable-21_11"
